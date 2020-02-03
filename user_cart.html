@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Your Items</title>
+    </head>
+    <body onload="getTheCartItems()">
+        <h3>Products In A Cart</h3>
+        <h4></h4>
+        <h5></h5>
+        <div id="addProductItems"></div>
+        <button onclick="proceedCheckout()">Proceed to Checkout</button>
+            
+        <script>
+            var urlParams = new URLSearchParams(window.location.search);
+            var users = JSON.parse(localStorage.users);
+            var username = urlParams.get('username');
+            var cart_items = new Array();
+            var product_id = 0;
+            var length = 0;
+            var sum = 0;
+            
+            function getTheCartItems()
+            {
+                var list = document.getElementById("addProductItems");
+                for(var i=0;i<users.length;i++)
+                {
+                    if(username.localeCompare(users[i].uname) == 0)
+                    {
+                        cart_items = users[i].cart;
+                    }
+                }                                
+                length = cart_items.length;
+
+                while(list.firstChild)
+                {
+                    list.removeChild(list.firstChild);
+                }
+
+                for(var i=0;i<cart_items.length;i++)
+                {
+                    totalPrice(cart_items[i]);
+                    addProductToDOM(cart_items[i]);
+                }
+
+                totalItems(cart_items.length);
+            }
+            
+            function addProductToDOM(product_item)
+            {
+                var list = document.getElementById("addProductItems");   
+                var para = document.createElement("p");
+                para.setAttribute("id",product_id);
+
+                var name = document.createTextNode("Product Name: " + product_item.name);
+                para.appendChild(name);
+                insertBlank(para);
+                insertBlank(para);
+                
+                var description = document.createTextNode("Product Desdcription: " + product_item.description);
+                para.appendChild(description);
+                insertBlank(para);
+                insertBlank(para);
+                
+                var price = document.createTextNode("Product Price: " + product_item.price);
+                para.appendChild(price);
+                insertBlank(para);
+                insertBlank(para);
+                
+                var quantity = document.createTextNode("Product Quantity: " + product_item.quantity);
+                para.appendChild(quantity);
+                insertBlank(para);
+                insertBlank(para);
+
+                var remove_btn = document.createElement("button");
+                remove_btn.innerHTML = "Remove";
+                remove_btn.setAttribute("onclick","removeTheItems()");
+                para.appendChild(remove_btn);
+
+                list.appendChild(para);
+                product_id++;
+            }
+            
+            function insertBlank(para)
+            {
+                var blank = document.createElement("BR");
+                para.appendChild(blank);
+            }
+
+            function proceedCheckout()
+            {
+                location.href = `checkout.html?username=${username}&tot=${sum}`;
+            }
+
+            function totalItems(total_items)
+            {
+                var heading = document.getElementsByTagName("h4");
+                heading[0].innerHTML = "Total: " + total_items;
+            }
+
+            function totalPrice(items)
+            {
+                var heading = document.getElementsByTagName("h5");
+                sum = sum + items.quantity*items.price;
+                heading[0].innerHTML = `Price : ${sum}`;
+            }
+
+            function removeTheItems()
+            {
+                var para = event.target.parentNode;
+                
+                //DOM updation
+                var div = para.parentNode;
+                div.removeChild(para);
+                length = length - 1;
+                totalItems(length);
+
+                sum = sum - para.quantity * para.price;
+                var heading = document.getElementsByTagName("h5");
+                heading[0].innerHTML = `Price : ${sum}`;
+
+                //Cart Array updation
+                for(var i=0;i<cart_items.length;i++)
+                {
+                    if(para.id == i)
+                    {
+                        cart_items.splice(i,1);
+                    }
+                }
+                storeCartItems(cart_items);
+            }
+
+            function storeCartItems(cart)
+            {
+                for(var i=0;i<users.length;i++)
+                {
+                    if(username.localeCompare(users[i].uname) == 0)
+                    {
+                        users[i].cart = cart;
+                    }
+                }                
+                localStorage.users = JSON.stringify(users);
+            }
+        </script>
+    </body>
+</html>

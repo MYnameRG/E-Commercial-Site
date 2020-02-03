@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>E-Commercial Site</title>
+</head>
+    <body onload="loadAppliedUsers()">
+        <h1>Welcome to E-Commercial Site</h1>
+        Username: <input type="text" name="uname" id="uname" required/><br><br>
+        Password: <input type="password" name="password" id="password" required/><br><br>
+        <input type="Submit" value="Login" onclick="checkLoggedUsers()" />
+        <br />
+        <h3>or Create Account</h3>
+        <input type="Submit" value="Signup" onclick="goToSignupPage()" />        
+        <script>
+            var uname = new Array();
+            var logged_users = null;
+
+            function goToSignupPage()
+            {
+                location.href = "signup.html";
+            }
+
+            function loadAppliedUsers()
+            {
+                logged_users = JSON.parse(localStorage.users);
+                for(var i=0;i<logged_users.length;i++)
+                {
+                    uname[i] = logged_users[i].uname;
+                }
+            }
+            
+            function checkLoggedUsers()
+            {
+                var username = document.getElementById("uname").value;
+                var count = 0;
+                for(var i=0;i<uname.length;i++)
+                {
+                    if(username.localeCompare(uname[i]) == 0)
+                    {
+                        logged_users[i].cart = [];
+                        var arrStr = JSON.stringify(logged_users[i].cart);
+                        location.href = `product_site.html?username=${username}&cart=${arrStr}`;
+                    }
+                    count++;
+                }
+                if(count == uname.length-1)
+                {
+                    alert("You have incorrect username or password...");
+                }
+            }
+            /*function addUserToArray()
+            {
+                var user = new Object();
+                user.email = document.getElementById("email").value;
+                user.password = document.getElementById("password").value;
+                user.id = users_id;
+                users.push(user);
+                storeUsers(users);
+                users_id++;
+            }*/
+            
+            /*function updatePassword()
+            {
+                target_object.name = document.getElementById("product_name").value;
+                target_object.description = document.getElementById("description").value;
+                target_object.price = document.getElementById("price").value;
+                target_object.quantity = document.getElementById("quantity").value;
+
+                var para = document.createElement('p');
+                para.appendChild(document.createTextNode(target_object.name));
+                insertBlank(para);
+                para.appendChild(document.createTextNode(target_object.description));
+                insertBlank(para);
+                para.appendChild(document.createTextNode(target_object.price));
+                insertBlank(para);
+                para.appendChild(document.createTextNode(target_object.quantity));
+                insertBlank(para);
+                
+                var button1 = document.createElement("button");
+                button1.innerHTML = "Edit";
+                button1.setAttribute("onclick","editProduct()");
+                para.appendChild(button1);
+                
+                var button2 = document.createElement("button");
+                button2.innerHTML = "Delete";
+                button2.setAttribute("onclick","deleteProduct()");
+                para.appendChild(button2);
+
+                target_node.parentNode.replaceChild(para,target_node);
+            }*/
+            
+            /*function storeUsers(user_details)
+            {
+                localStorage.user_details = JSON.stringify(user_details);
+            }
+
+            function insertBlank(para)
+            {
+                var blank = document.createElement("br");
+                para.appendChild(blank);
+            }
+
+            function loginUsers()
+            {
+                if(!localStorage.user_details)
+                {
+                    localStorage.user_details = JSON.stringify([]);
+                }
+
+                logged_users = JSON.parse(localStorage.user_details);
+                var email = document.getElementById("email").value;
+                var password = document.getElementById("password").value;
+
+                for(var i=0;i<logged_users.length;i++)
+                {
+                    if(email.localeCompare(logged_users[i].email) == 0 && password.localeCompare(logged_users[i].password) == 0)
+                    {
+                        location.href = "cart.html";
+                    }
+                    else
+                    {
+                        alert("Your email or password is incorrect!!!!!");
+                    }
+                }
+
+            }*/
+
+        </script>
+    </body>
+</html>

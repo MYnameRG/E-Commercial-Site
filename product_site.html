@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Product Items</title>
+    </head>
+    <body onload="getProductToArray()">
+        <h1>Welcome To Our E-Commercial Site</h1>
+        <div id="username"></div>
+        <h3>List of Products</h3>
+        <div id="addProductItems"></div>
+            
+        <script>
+            var urlParams = new URLSearchParams(window.location.search);
+            var selling_products = new Array();
+            var cart_items = JSON.parse(urlParams.get('cart'));
+            var username = urlParams.get('username');
+            var user_cart = new Array();
+
+            function userProductSite()
+            {
+                var header = document.getElementById('username');
+                var h2 = document.createElement('h2');
+                h2.setAttribute('id','user');
+                h2.appendChild(document.createTextNode("User: "+username));
+                header.appendChild(h2);
+                var btn = document.createElement('button');
+                btn.setAttribute('id','cart');
+                btn.setAttribute('onclick','openCartSite()');
+                btn.appendChild(document.createTextNode("Show Cart"));
+                header.appendChild(btn);
+            }
+            userProductSite();
+
+            function openCartSite()
+            {
+                location.href = `user_cart.html?username=${username}`;
+            }
+
+            function getProductToArray()
+            {
+                var list = document.getElementById("addProductItems");
+
+                if(!localStorage.products)
+                {
+                    localStorage.products = JSON.stringify([]);
+                }
+                
+                selling_products = JSON.parse(localStorage.products);
+
+                while(list.firstChild)
+                {
+                    list.removeChild(list.firstChild);
+                }
+
+                for(var i=0;i<selling_products.length;i++)
+                {
+                    addProductToDOM(selling_products[i]);
+                }
+            }
+            
+            function addProductToDOM(product_item)
+            {
+                var list = document.getElementById("addProductItems");   
+                var para = document.createElement("p");
+                para.setAttribute("id",product_item.id);
+
+                var name = document.createTextNode(product_item.name);
+                para.appendChild(name);
+                insertBlank(para);
+                
+                var description = document.createTextNode(product_item.description);
+                para.appendChild(description);
+                insertBlank(para);
+
+                var price = document.createTextNode(product_item.price);
+                para.appendChild(price);
+                insertBlank(para);
+
+                if(product_item.quantity != 0 && product_item.quantity > 0)
+                {
+                    var textbox = document.createElement("input");
+                    textbox.setAttribute("placeholder","Enter the quantity");
+                    para.appendChild(textbox);
+
+                    var cart_btn = document.createElement("button");
+                    cart_btn.innerHTML = "Add to Cart";
+                    cart_btn.setAttribute("onclick","addToCartArray()");
+                    para.appendChild(cart_btn);
+                }
+                else
+                {
+                    var p = document.createElement("p");
+                    p.innerHTML = 'Out Of Stock';
+                    p.style.color = 'red';
+                    p.style.fontWeight = 'bold';
+                    para.appendChild(p);
+                }
+
+                list.appendChild(para);
+            }
+            
+            function insertBlank(para)
+            {
+                var blank = document.createElement("BR");
+                para.appendChild(blank);
+            }
+
+            function addToCartArray()
+            {
+                var para = event.target.parentNode;
+                var item = new Object();
+                item.name = para.childNodes[0].nodeValue;
+                item.description = para.childNodes[2].nodeValue;
+                item.price = para.childNodes[4].nodeValue;
+                item.quantity = para.childNodes[6].value;
+                //item.id = selling_items[para.id].id;
+                cart_items.push(item);
+                storeProducts(item);
+                storeCartItems(cart_items);
+            }
+
+            function storeCartItems(cart_items)
+            {
+                var user = JSON.parse(localStorage.users);
+                for(var i=0;i<user.length;i++)
+                {
+                    if(username.localeCompare(user[i].uname) == 0)
+                    {
+                        user[i].cart = cart_items;
+                    }
+                }
+                localStorage.users = JSON.stringify(user);
+            }
+
+            function storeProducts(item)
+            {
+                var product_name = item.name;
+                for(var i=0;i<selling_products.length;i++)
+                {
+                    if(product_name.localeCompare(selling_products[i].name) == 0)
+                    {
+                        if(selling_products[i].quantity <= 0)
+                        {
+                            console.log("It is Empty...");
+                            return;
+                        }
+                        selling_products[i].quantity = selling_products[i].quantity - item.quantity;
+                    }
+                }
+                localStorage.products = JSON.stringify(selling_products);
+            }
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>SignUp Page</title>
+</head>
+<body>
+    <h3>Welcome to The SignUp Page</h3>
+    First-Name: <input type="text" name="fname" id="fname" required/><br><br>
+    Last-Name: <input type="text" name="lname" id="lname" required/><br><br>
+    User-Name: <input type="text" name="uname" id="uname" required/><br><br>
+    Email: <input type="text" name="email" id="email" required/><br><br>
+    Password: <input type="password" name="password" id="password" required/><br><br>
+    <input type="Submit" value="Create Account" onclick="addUserToArray()" />
+    
+    <script>
+        var user_storage = new Array();
+        var user_id = 0;
+        var exist = 0;
+        
+        if(localStorage.users)
+        {
+            user_storage = JSON.parse(localStorage.users);
+            user_id = user_storage.length;
+        }        
+
+        function addUserToArray()
+        {
+            var user = new Object();
+            var user_cart = [];
+            user.id = user_id;
+            user.cart = [];
+            user.fname = document.getElementById("fname").value;
+            user.lname = document.getElementById("lname").value;
+            user.uname = document.getElementById("uname").value;
+            user.email = document.getElementById("email").value;
+            user.password = document.getElementById("password").value;
+            exist = existOrNot(user);
+
+            if(exist == 1)
+            {
+                alert("The Account is Already Existed...");                
+            }
+            else
+            {
+                user_storage.push(user);
+                storeUsers(user_storage);
+                user_id++;
+
+                var cart = JSON.stringify(user.cart);
+                location.href = `product_site.html?username=${user.uname}&cart=${cart}`;                                                
+            }
+        }
+
+        function storeUsers(user_detail)
+        {
+            localStorage.users = JSON.stringify(user_detail);
+        }
+
+        function existOrNot(user)
+        {
+            var username = user.uname;
+            for(var i=0;i<user_storage.length;i++)
+            {
+                if(username.localeCompare(user_storage[i].uname) == 0)
+                {
+                    exist = 1;
+                    return exist;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

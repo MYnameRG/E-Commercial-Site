@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Deliver Your Items</title>
+    </head>
+    <body onload="getTheCartItems()">
+
+        <h3>Final Order Delivery</h3>
+        <h4 id="total"></h4>
+        <h5 id="price"></h5>
+        <div id="addProductItems"></div>
+        <button onclick="OrderedConfirmed()">Confirm Order</button>
+            
+        <script>
+            var urlParams = new URLSearchParams(window.location.search);
+            var users = JSON.parse(localStorage.users);
+            var price = urlParams.get('tot');
+            var username = urlParams.get('username');            
+            var confirm_items = new Array();
+            var product_items = 1;
+            
+            function getTheCartItems()
+            {
+                var list = document.getElementById("addProductItems");
+                for(var i=0;i<users.length;i++)
+                {
+                    if(username.localeCompare(users[i].uname) == 0)
+                    {
+                        confirm_items = users[i].cart;
+                    }
+                }                                                
+
+                while(list.firstChild)
+                {
+                    list.removeChild(list.firstChild);
+                }
+
+                totalItems(confirm_items.length);
+                totalPrice(price);
+
+                for(var i=0;i<confirm_items.length;i++)
+                {
+                    addProductToDOM(confirm_items[i]);
+                }
+            }
+            
+            function addProductToDOM(product_item)
+            {
+                var list = document.getElementById("addProductItems");   
+                var para = document.createElement("p");
+
+                var name = document.createTextNode("Product Name: " + product_item.name);
+                para.appendChild(name);
+                insertBlank(para);
+                insertBlank(para);
+                
+                var description = document.createTextNode("Product Desdcription: " + product_item.description);
+                para.appendChild(description);
+                insertBlank(para);
+                insertBlank(para);
+                
+                var price = document.createTextNode("Product Price: " + product_item.price);
+                para.appendChild(price);
+                insertBlank(para);
+                insertBlank(para);
+                
+                var quantity = document.createTextNode("Product Quantity: " + product_item.quantity);
+                para.appendChild(quantity);
+                insertBlank(para);
+                insertBlank(para);
+
+                var line = document.createElement("HR");
+                para.appendChild(line);
+
+                list.appendChild(para);
+            }
+            
+            function insertBlank(para)
+            {
+                var blank = document.createElement("BR");
+                para.appendChild(blank);
+            }
+
+            function OrderedConfirmed()
+            {
+                alert("Thank you for shopping in our website!!!!!");
+                location.href = `product_site.html?username=${username}&cart=${JSON.stringify(confirm_items)}`;
+            }
+
+            function totalItems(total_items)
+            {
+                var heading = document.getElementsByTagName("h4");
+                heading[0].innerHTML = "Total: " + total_items;
+            }
+
+            function totalPrice(sum)
+            {
+                var heading = document.getElementsByTagName("h5");
+                heading[0].innerHTML = `Price : ${sum}`;
+            }            
+
+        </script>
+
+    </body>
+</html>

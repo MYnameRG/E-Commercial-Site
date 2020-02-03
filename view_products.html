@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Products</title>
+        <link rel="stylesheet" href="css.css" type="text/css">
+    </head>
+    <body onload="getStoredproducts()">
+        <h3>List of View Products</h3>
+        <div id="addProductItems"></div>
+            
+        <script src="products_selling.html" type="text/javascript"></script>
+        <script>
+            var product_item = new Array();
+            var product_id = 1;
+            var target_object = new Object();
+            var target_node;
+            
+            function addProductToArray()
+            {
+                var products = new Object();
+                products.name = document.getElementById("product_name").value;
+                products.description = document.getElementById("description").value;
+                products.price = document.getElementById("price").value;
+                products.quantity = document.getElementById("quantity").value;
+                products.id = product_id;
+                product_item.push(products);
+                addProductToDOM(products);
+                storeProducts(product_item);
+                product_id++;
+            }
+            
+            function addProductToDOM(products)
+            {
+                var list = document.getElementById("addProductItems");
+                var product = products;
+                
+                var p = document.createElement("p");
+                p.setAttribute("id",product_id);
+                //list.appendChild(p);
+                //div.setAttribute("style","visibility:inline-block");
+                p.appendChild(document.createTextNode(product.name));
+                p.appendChild(document.createTextNode(" "));
+                //insertBlank();
+                p.appendChild(document.createTextNode(product.description));
+                p.appendChild(document.createTextNode(" "));
+                //insertBlank();
+                p.appendChild(document.createTextNode(product.price));
+                p.appendChild(document.createTextNode(" "));
+                //insertBlank();
+                p.appendChild(document.createTextNode(product.quantity));
+                p.appendChild(document.createTextNode(" "));
+                //list.appendChild(div);
+                
+                list.appendChild(p);
+            }
+            
+            function insertBlank()
+            {
+                var list = document.getElementById("addProductItems");
+                var blank = document.createElement("br");
+                list.appendChild(blank);
+            }
+            
+            function deleteProduct()
+            {
+                var para = event.target.parentNode;
+                var div = para.parentNode;
+                div.removeChild(para);
+            }
+            
+            function editProduct()
+            {
+                var para = event.target.parentNode;
+                target_node = para;
+                document.getElementById("product_name").value = para.childNodes[0].nodeValue;
+                document.getElementById("description").value = para.childNodes[2].nodeValue;
+                document.getElementById("price").value = para.childNodes[4].nodeValue;
+                document.getElementById("quantity").value = para.childNodes[6].nodeValue;
+
+                for(var i=0;i<product_item.length;i++)
+                {
+                    if(para.id == i)
+                    target_object=products_item[i];
+                }
+            }
+            
+            function updateProduct()
+            {
+                target_object.name = document.getElementById("product_name").value;
+                target_object.description = document.getElementById("description").value;
+                target_object.price = document.getElementById("price").value;
+                target_object.quantity = document.getElementById("quantity").value;
+
+                var para = document.createElement('p');
+                para.appendChild(document.createTextNode(target_object.name));
+                para.appendChild(document.createTextNode(" "));
+                para.appendChild(document.createTextNode(target_object.description));
+                para.appendChild(document.createTextNode(" "));
+                para.appendChild(document.createTextNode(target_object.price));
+                para.appendChild(document.createTextNode(" "));
+                para.appendChild(document.createTextNode(target_object.quantity));
+                para.appendChild(document.createTextNode(" "));
+                
+                var button1 = document.createElement("button");
+                //button1.setAttribute("type","button");
+                button1.innerHTML = "Edit";
+                button1.setAttribute("onclick","editProduct()");
+                para.appendChild(button1);
+                
+                //var id = products.id;
+                var button2 = document.createElement("button");
+                button2.innerHTML = "Delete";
+                button2.setAttribute("onclick","deleteProduct()");
+                para.appendChild(button2);
+
+                target_node.parentNode.replaceChild(para,target_node);
+            }
+            
+            function storeProducts(products)
+            {
+                localStorage.products = JSON.stringify(products);
+            }
+
+            function getStoredproducts()
+            {
+                if(!localStorage.products)
+                {
+                    //default to empty array
+                    localStorage.products = JSON.stringify([]);
+                }
+                product_item= JSON.parse(localStorage.products);
+                for(var i=0;i<product_item.length;i++){
+                    addProductToDOM(product_item[i]);
+                }
+            }
+            
+        </script>
+    </body>
+</html>
